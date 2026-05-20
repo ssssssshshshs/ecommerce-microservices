@@ -1,0 +1,5 @@
+/home/rohit-kumar/ecommerce-microservices/user-service/src/main/java/com/example/user_service/UserServiceApplication.java
+/home/rohit-kumar/ecommerce-microservices/user-service/src/main/java/com/example/user_service/controller/UserController.java
+/home/rohit-kumar/ecommerce-microservices/user-service/src/main/java/com/example/user_service/entity/User.java
+/home/rohit-kumar/ecommerce-microservices/user-service/src/main/java/com/example/user_service/repository/UserRepository.java
+/home/rohit-kumar/ecommerce-microservices/user-service/src/main/java/com/example/user_service/service/UserService.java
