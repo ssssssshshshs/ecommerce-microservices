@@ -74,6 +74,11 @@ public class UserController {
         return service.login(request);
     }
 
+    @GetMapping("/profile")
+    public String profile() {
+        return "Protected Profile API";
+    }
+
 
 
 

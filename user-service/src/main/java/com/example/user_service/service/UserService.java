@@ -34,6 +34,7 @@ import com.example.user_service.dto.UserRequest;
 import com.example.user_service.dto.UserResponse;
 import com.example.user_service.entity.User;
 import com.example.user_service.repository.UserRepository;
+import com.example.user_service.security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,10 +46,11 @@ import java.util.stream.Collectors;
 public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository repository;
-
-    public UserService(UserRepository repository,BCryptPasswordEncoder passwordEncoder) {
+    private final JwtUtil jwtUtil;
+    public UserService(UserRepository repository,BCryptPasswordEncoder passwordEncoder,JwtUtil jwtUtil) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil=jwtUtil;
     }
 
     public UserResponse saveUser(UserRequest request) {
@@ -82,7 +84,7 @@ public class UserService {
                 ))
                 .collect(Collectors.toList());
     }
-
+/*
     public String login(LoginRequest request) {
 
         User user = repository.findByEmail(request.getEmail())
@@ -102,5 +104,26 @@ public class UserService {
 
         return "Login Successful";
     }
+
+ */
+public String login(LoginRequest request) {
+
+    User user = repository.findByEmail(request.getEmail())
+            .orElseThrow(() ->
+                    new RuntimeException("User not found")
+            );
+
+    boolean passwordMatches =
+            passwordEncoder.matches(
+                    request.getPassword(),
+                    user.getPassword()
+            );
+
+    if (!passwordMatches) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    return jwtUtil.generateToken(user.getEmail());
+}
 
 }
