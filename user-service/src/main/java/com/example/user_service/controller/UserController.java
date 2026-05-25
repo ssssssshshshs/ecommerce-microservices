@@ -40,9 +40,11 @@ public class UserController {
 package com.example.user_service.controller;
 
 import com.example.user_service.dto.LoginRequest;
+import com.example.user_service.dto.LoginResponse;
 import com.example.user_service.dto.UserRequest;
 import com.example.user_service.dto.UserResponse;
 import com.example.user_service.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -67,8 +69,9 @@ public class UserController {
         return service.getAllUsers();
     }
 
+
     @PostMapping("/login")
-    public String login(
+    public LoginResponse login(
             @RequestBody LoginRequest request) {
 
         return service.login(request);
@@ -80,7 +83,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/me")
+    public UserResponse getCurrentUser(
+            Authentication authentication) {
 
+        return service.getCurrentUser(authentication);
+    }
 
 
 

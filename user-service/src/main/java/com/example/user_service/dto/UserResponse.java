@@ -10,7 +10,7 @@ public class UserResponse {
     public UserResponse() {
     }
 
-    public UserResponse(Integer id, String name, String email) {
+    public UserResponse(Integer id, String name,String email) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -31,6 +31,7 @@ public class UserResponse {
     public void setName(String name) {
         this.name = name;
     }
+
 
     public String getEmail() {
         return email;
