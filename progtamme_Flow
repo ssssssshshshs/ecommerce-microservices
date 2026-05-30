@@ -1,0 +1,263 @@
+##DATE 27-05-2026
+##TOPIC: Flow how to spring boot working.
+
+
+Controller::
+......................................
+@PostMapping
+public Product addProduct(@RequestBody Product product) {
+
+    return service.addProduct(product);
+}
+.......................................
+Entity::
+
+@Entity
+@Table(name = "products")
+public class Product
+
+.......................................
+
+STEP 1 → Client Sends Request
+
+Example using curl:
+
+curl -X POST http://localhost:8080/products \
+-H "Content-Type: application/json" \
+-d '{
+      "name":"Laptop",
+      "description":"Gaming laptop",
+      "price":75000,
+      "stockQuantity":5,
+      "category":"Electronics"
+    }'
+
+STEP 2 → HTTP Request Reaches Spring Boot
+
+Spring Boot receives:
+
+POST /products 
+
+## With json body.
+
+STEP3: spring Search Matching Controller Method.
+
+$ Spring sees:
+@PostMapping    // Handle HTTP POST request
+
+$ Then endpoint becomes:
+
+POST /products
+
+>> Spring matches request to:
+
+public Product addProduct(@RequestBody Product product)
+
+STEP4: @RequestBody starts JSON Conversion.
+
+Spring sees:
+@RequestBody  ...... Convert incomming JSON into java object.
+
+STEP5: Jackson Create Product Object.
+Internally Spring uses:
+Jackson:
+
+Product product=new Product();
+
+Using your default constructor:
+
+public Product(){
+}
+
+STEP6: Jackson Calls Setters:
+
+JSON:
+
+{
+   "name":"Laptop",
+   "description":"Gaming laptop",
+   "price":75000,
+   "stockQuantity":5,
+   "category":"Electronics"
+}
+
+## Jackson internally calls:
+
+product.setName("Laptop");
+product.setDescription("Gaming laptop");
+product.setPrice(75000.0);
+product.setStockQuantity(5);
+product.setCategory("Electronics");
+
+Note: Jackson uses setters to fill object values.
+
+STEP7: Product Object Ready
+Now Object Becomes:
+
+Product {
+   id = null,
+   name = "Laptop",
+   description = "Gaming laptop",
+   price = 75000,
+   stockQuantity = 5,
+   category = "Electronics",
+   createdAt = null
+}
+
+## WHY id IS NULL?
+
+$ Because client did not send it.
+
+Also:
+
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+means:
+
+Database will auto-generate ID.
+
+STEP8: Controller Received Object:
+
+## Now controller method runs:
+
+$$ public Product addProduct(Product product)
+
+where:
+
+product
+
+already contains converted data.
+
+STEP 9 → Controller Calls Service
+$$ return service.addProduct(product);
+
+STEP10: Service Layer Runs
+Service method is :
+
+    // Add Product
+    public Product addProduct(Product product) {
+
+        product.setCreatedAt(LocalDateTime.now());
+
+        return repository.save(product);
+    }
+    
+STEP 11 → createdAt Added
+
+product.setCreatedAt(LocalDateTime.now());
+
+Now object becomes:
+
+Product {
+   id = null,
+   name = "Laptop",
+   description = "Gaming laptop",
+   price = 75000,
+   stockQuantity = 5,
+   category = "Electronics",
+   createdAt = current time
+}
+
+STEP 12 → repository.save()
+repository.save(product);
+
+Now Spring Data JPA + Hibernate starts working.
+
+STEP 13 → Hibernate Converts Object → SQL
+
+Hibernate generates SQL:
+
+insert into products
+(name, description, price, stock_quantity, category, created_at)
+values
+('Laptop', 'Gaming laptop', 75000, 5, 'Electronics', current_time);
+
+STEP 14 → MySQL Saves Data
+
+Database inserts row.
+
+MySQL auto-generates ID:
+
+id	name	price
+1	Laptop	75000
+
+STEP 15 → Hibernate Returns Saved Object
+
+After insert:
+
+product.id = 1
+
+Hibernate updates Java object with generated ID.
+
+STEP 16 → Response Returned
+
+Controller returns saved object.
+
+Spring converts Java object → JSON.
+
+Response:
+
+{
+   "id":1,
+   "name":"Laptop",
+   "description":"Gaming laptop",
+   "price":75000,
+   "stockQuantity":5,
+   "category":"Electronics",
+   "createdAt":"2026-05-27T18:30:00"
+}
+
+................................COMPLETE INTERNAL FLOW......................................................................
+
+Client JSON Request
+        ↓
+@PostMapping matched
+        ↓
+@RequestBody
+        ↓
+Jackson Library
+        ↓
+new Product()
+        ↓
+Calls setters()
+        ↓
+Product object created
+        ↓
+Controller receives object
+        ↓
+Service Layer
+        ↓
+repository.save()
+        ↓
+Hibernate ORM
+        ↓
+SQL INSERT query generated
+        ↓
+MySQL Database
+        ↓
+Row inserted
+        ↓
+Generated ID returned
+        ↓
+Java Object updated
+        ↓
+Spring converts object → JSON
+        ↓
+JSON Response returned
+
+...........................................................END.....................................................
+
+....................................................ROLE OF EACH COMPONENTS.........................................
+
+| Component    | Work                   |
+| ------------ | ---------------------- |
+| Client       | Sends JSON             |
+| Controller   | Receives request       |
+| @RequestBody | Converts JSON → Object |
+| Jackson      | Creates Java object    |
+| Service      | Business logic         |
+| Repository   | Database communication |
+| Hibernate    | Generates SQL          |
+| MySQL        | Stores data            |
+| Spring Boot  | Manages everything     |
+
