@@ -1,7 +1,16 @@
 package com.example.product_service.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponseDTO {
 
     private Integer id;
@@ -11,7 +20,7 @@ public class ProductResponseDTO {
     private Integer stockQuantity;
     private String category;
     private LocalDateTime createdAt;
-
+/*
     public ProductResponseDTO() {
     }
 
@@ -70,4 +79,7 @@ public class ProductResponseDTO {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+
+ */
 }

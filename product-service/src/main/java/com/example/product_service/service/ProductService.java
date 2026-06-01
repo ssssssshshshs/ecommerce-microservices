@@ -181,10 +181,12 @@ public class ProductService {
 
         ProductResponseDTO responseDTO =new ProductResponseDTO();
         responseDTO.setName(updatedProduct.getName());
+        responseDTO.setId(updatedProduct.getId());
         responseDTO.setDescription(updatedProduct.getDescription());
         responseDTO.setPrice(updatedProduct.getPrice());
         responseDTO.setCategory(updatedProduct.getCategory());
         responseDTO.setStockQuantity(updatedProduct.getStockQuantity());
+        responseDTO.setCreatedAt(updatedProduct.getCreatedAt());
 
         return responseDTO;
 
