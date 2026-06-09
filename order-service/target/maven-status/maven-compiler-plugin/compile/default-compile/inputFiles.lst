@@ -1,5 +1,6 @@
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/client/ProductClient.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/dto/OrderResponseDTO.java
+/home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/dto/UserResponse.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/service/OrderService.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/dto/ProductResponseDTO.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/dto/OrderPatchDTO.java
@@ -8,8 +9,9 @@
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/exception/InvalidOrderException.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/entity/Order.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/repository/OrderRepository.java
-/home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/client/ProductResponseDTO.java
+/home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/client/UserClient.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/dto/OrderRequestDTO.java
+/home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/client/ProductFeignClient.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/config/AppConfig.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/controller/OrderController.java
 /home/rohit-kumar/ecommerce-microservices/order-service/src/main/java/com/example/orderservice/OrderserviceApplication.java

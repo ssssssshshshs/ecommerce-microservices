@@ -2,11 +2,9 @@ package com.example.orderservice.service;
 
 
 import com.example.orderservice.client.ProductFeignClient;
-import com.example.orderservice.dto.OrderPatchDTO;
-import com.example.orderservice.dto.OrderRequestDTO;
+import com.example.orderservice.client.UserClient;
+import com.example.orderservice.dto.*;
 
-import com.example.orderservice.dto.OrderResponseDTO;
-import com.example.orderservice.dto.ProductResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.exception.InvalidOrderException;
 import com.example.orderservice.exception.OrderNotFoundException;
@@ -28,8 +26,13 @@ import org.slf4j.LoggerFactory;
 public class OrderService {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
-    
-	@Autowired
+
+    private final UserClient userClient;
+    public OrderService(UserClient userClient) {
+        this.userClient = userClient;
+    }
+
+    @Autowired
     private OrderRepository repository;
 
    // public Order createOrder(Order order)
@@ -318,5 +321,21 @@ public class OrderService {
 
         return productFeignClient.getProduct(id);
     }
+
+    public UserResponse testUserService(Long id) {
+        return userClient.getUserById(id);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

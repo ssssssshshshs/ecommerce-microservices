@@ -2,10 +2,7 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.client.ProductClient;
 import com.example.orderservice.client.ProductFeignClient;
-import com.example.orderservice.dto.OrderPatchDTO;
-import com.example.orderservice.dto.OrderRequestDTO;
-import com.example.orderservice.dto.OrderResponseDTO;
-import com.example.orderservice.dto.ProductResponseDTO;
+import com.example.orderservice.dto.*;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.service.OrderService;
 
@@ -114,9 +111,11 @@ public class OrderController {
         return productFeignClient.getProduct(id);
     }
 
+    @GetMapping("/test-user/{id}")
+    public UserResponse testUser(
+            @PathVariable Long id) {
 
-
-
-
+        return service.testUserService(id);
+    }
 
 }
