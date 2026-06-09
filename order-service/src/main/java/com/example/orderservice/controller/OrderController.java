@@ -1,8 +1,11 @@
 package com.example.orderservice.controller;
 
+import com.example.orderservice.client.ProductClient;
+import com.example.orderservice.client.ProductFeignClient;
 import com.example.orderservice.dto.OrderPatchDTO;
 import com.example.orderservice.dto.OrderRequestDTO;
 import com.example.orderservice.dto.OrderResponseDTO;
+import com.example.orderservice.dto.ProductResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.service.OrderService;
 
@@ -90,5 +93,30 @@ public class OrderController {
          service.deleteOrder(id);
          return ResponseEntity.noContent().build();
     }
-    
+
+    @Autowired
+    private ProductClient productClient;
+
+    @GetMapping("/test-product/{id}")
+    public ProductResponseDTO testProduct(
+            @PathVariable Integer id) {
+
+        return productClient.getProduct(id);
+    }
+
+    @Autowired
+    private ProductFeignClient productFeignClient;
+
+    @GetMapping("/feign-test/{id}")
+    public ProductResponseDTO testFeign(
+            @PathVariable Integer id) {
+
+        return productFeignClient.getProduct(id);
+    }
+
+
+
+
+
+
 }

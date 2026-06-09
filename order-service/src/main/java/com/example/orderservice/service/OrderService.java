@@ -1,10 +1,12 @@
 package com.example.orderservice.service;
 
 
+import com.example.orderservice.client.ProductFeignClient;
 import com.example.orderservice.dto.OrderPatchDTO;
 import com.example.orderservice.dto.OrderRequestDTO;
 
 import com.example.orderservice.dto.OrderResponseDTO;
+import com.example.orderservice.dto.ProductResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.exception.InvalidOrderException;
 import com.example.orderservice.exception.OrderNotFoundException;
@@ -305,4 +307,16 @@ public class OrderService {
 
         return "Order deleted successfully";
     }
+
+
+
+    @Autowired
+    private ProductFeignClient productFeignClient;
+
+    public ProductResponseDTO getProduct(
+            Integer id) {
+
+        return productFeignClient.getProduct(id);
+    }
+
 }
