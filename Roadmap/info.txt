@@ -1,0 +1,781 @@
+Suggested Roadmap
+Phase 1 (Current)
+✅ User Service
+✅ Product Service
+✅ Order Service
+✅ API Gateway
+Phase 2
+✅ Eureka Server
+✅ Eureka Client
+✅ Register Services
+✅ Gateway + Eureka
+Phase 3
+✅ OpenFeign
+
+Order Service:
+
+Order Service
+      |
+      +----> User Service
+      |
+      +----> Product Service
+
+If you've already implemented Feign, great. If not, do it around this stage.
+
+Phase 4
+✅ JWT Authentication
+
+Login:
+
+POST /auth/login
+
+Generate JWT.
+
+Gateway validates JWT.
+
+Phase 5
+✅ Config Server
+
+Move configurations out of services.
+
+Phase 6
+✅ Resilience4j
+
+Circuit Breaker
+
+Retry
+
+Fallback
+
+Phase 7
+✅ Docker
+
+Containerize:
+
+User Service
+Product Service
+Order Service
+Gateway
+Eureka
+Phase 8
+✅ Kubernetes
+
+Deploy the entire system.
+
+What I'd Do Next
+Create Eureka Server
+Register User Service
+Register Product Service
+Register Order Service
+Register API Gateway
+Replace:
+.uri("http://localhost:8080")
+
+with:
+
+.uri("lb://USER-SERVICE")
+Verify routing through Eureka
+
+That gives you a real microservice architecture rather than services connected by fixed localhost ports.
+
+okk now start phase 2 step by step ??
+
+Perfect. Let's start Phase 2: Service Discovery with Eureka.
+
+Current architecture:
+
+User Service     -> 8080
+Order Service    -> 8081
+Product Service  -> 8082
+API Gateway      -> 8085
+
+Currently Gateway knows exact ports:
+
+.uri("http://localhost:8080")
+.uri("http://localhost:8081")
+.uri("http://localhost:8082")
+
+Our goal:
+
+.uri("lb://USER-SERVICE")
+.uri("lb://ORDER-SERVICE")
+.uri("lb://PRODUCT-SERVICE")
+
+and let Eureka find the actual instances.
+
+Step 1: Create Eureka Server
+
+Create a new Spring Boot project.
+
+Project Name
+eureka-server
+Dependencies
+
+Add only:
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
+Step 2: Enable Eureka Server
+
+Main class:
+
+package com.example.eurekaserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+Step 3: Configure application.properties
+spring.application.name=eureka-server
+
+server.port=8761
+
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+Meaning
+
+This application is the registry itself.
+
+So:
+
+Don't register me
+Don't fetch registry
+
+because it IS the registry.
+
+Step 4: Start Eureka Server
+
+Run the application.
+
+Open:
+
+http://localhost:8761
+
+You should see the Eureka Dashboard.
+
+At first:
+
+Instances currently registered with Eureka: 0
+
+This is expected.
+
+Step 5: Add Eureka Client to User Service
+
+In User Service add:
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+Step 6: Configure User Service
+
+Add to User Service:
+
+spring.application.name=USER-SERVICE
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+Keep:
+
+server.port=8080
+Step 7: Enable Eureka Client
+
+For modern Spring Boot versions, adding the dependency is usually enough.
+
+No annotation required.
+
+Restart User Service.
+
+Step 8: Verify Registration
+
+Open:
+
+http://localhost:8761
+
+Now you should see:
+
+USER-SERVICE
+
+registered.
+
+Step 9: Repeat for Product Service
+
+Add dependency:
+
+spring-cloud-starter-netflix-eureka-client
+
+Properties:
+
+spring.application.name=PRODUCT-SERVICE
+
+server.port=8082
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+Restart.
+
+Dashboard should show:
+
+USER-SERVICE
+PRODUCT-SERVICE
+Step 10: Repeat for Order Service
+
+Properties:
+
+spring.application.name=ORDER-SERVICE
+
+server.port=8081
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+Restart.
+
+Dashboard:
+
+USER-SERVICE
+PRODUCT-SERVICE
+ORDER-SERVICE
+Stop Here First
+
+Before touching Gateway, verify:
+
+http://localhost:8761
+
+shows all three services registered.
+
+Expected:
+
+Applications
+
+USER-SERVICE
+PRODUCT-SERVICE
+ORDER-SERVICE
+
+Once you reach that point, we'll do the next part:
+
+Step 11
+
+Register API Gateway with Eureka
+
+Step 12
+
+Replace:
+
+.uri("http://localhost:8080")
+
+with:
+
+.uri("lb://USER-SERVICE")
+Step 13
+
+Test service discovery through Gateway
+
+Get the Eureka Server running first and tell me:
+
+Spring Boot version you're using for Eureka
+Whether http://localhost:8761 opens
+Whether USER-SERVICE appears after registration
+
+Then we'll continue.
+
+Pasted text(11).txt
+Document
+?
+
+This error confirms what I suspected earlier:
+
+Spring Boot 4.1.0 + Eureka Server is the problem, not your code.
+
+Your stack trace shows:
+
+spring-boot-4.1.0.jar
+spring-cloud-netflix-eureka-client-5.0.2.jar
+
+and then:
+
+No qualifying bean of type
+TransportClientFactories
+
+followed by:
+
+Failed to start bean 'eurekaAutoServiceRegistration'
+
+This is a compatibility issue, not a configuration mistake.
+
+Why API Gateway Worked But Eureka Doesn't
+
+Gateway:
+
+spring-cloud-starter-gateway-server-webflux
+
+is already adapted for the newer Spring ecosystem.
+
+Eureka:
+
+spring-cloud-starter-netflix-eureka-server
+
+still has compatibility gaps with the Boot 4 ecosystem you're using.
+
+My Recommendation
+
+For your learning project:
+
+User Service
+Product Service
+Order Service
+API Gateway
+Eureka
+Feign
+JWT
+Docker
+
+switch to:
+
+Spring Boot 3.5.x
+
+for all microservices.
+
+This is the version used in most tutorials and enterprise examples today.
+
+Quickest Fix
+
+Create a new Eureka Server project:
+
+Spring Initializr
+Project: Maven
+Java: 17
+Spring Boot: 3.5.x
+
+Dependencies:
+
+Eureka Server
+Lombok
+
+Then:
+
+@EnableEurekaServer
+
+and
+
+server.port=8761
+
+spring.application.name=eureka-server
+
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+
+Start it.
+
+Visit:
+
+http://localhost:8761
+
+You should see the Eureka dashboard.
+
+Alternative
+
+Stay on Boot 4.1.0 and wait for the Spring Cloud Netflix ecosystem to fully support it, but for learning microservices that's going to create unnecessary friction.
+
+What I Would Do In Your Situation
+
+You already spent time debugging Gateway because of Boot 4.
+
+Now Eureka is failing for the same reason.
+
+I'd:
+
+Create a fresh project with Boot 3.5.x.
+Move your Gateway code.
+Create Eureka on 3.5.x.
+Continue with Feign and JWT.
+
+You'll save many hours of version-related debugging.
+
+Can you tell me:
+
+Are User Service, Product Service, Order Service, and Gateway all currently using Spring Boot 4.1.0?
+Or only Eureka is using 4.1.0?
+
+That will determine whether you should downgrade just Eureka or the whole microservices stack.
+
+tell me what to do in step 11 and 12 ??
+
+Step 11 and Step 12 happen after Eureka Server is working and all services are registered.
+
+Right now, because Eureka is not starting, you cannot do Step 11 and 12 yet. But I'll explain what they are so you understand the goal.
+
+Current Situation
+
+Your Gateway currently has:
+
+.route("user-service",
+        r -> r.path("/users/**")
+              .uri("http://localhost:8080"))
+
+.route("product-service",
+        r -> r.path("/products/**")
+              .uri("http://localhost:8082"))
+
+.route("order-service",
+        r -> r.path("/orders/**")
+              .uri("http://localhost:8081"))
+
+Gateway knows exact ports.
+
+Step 11: Register API Gateway with Eureka
+
+Add Eureka Client dependency to Gateway:
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+
+Gateway application.properties:
+
+spring.application.name=API-GATEWAY
+
+server.port=8085
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+When Gateway starts:
+
+API-GATEWAY registered in Eureka
+
+Dashboard:
+
+APPLICATIONS
+
+API-GATEWAY
+USER-SERVICE
+PRODUCT-SERVICE
+ORDER-SERVICE
+Step 12: Replace Hardcoded URLs
+Before Eureka
+.uri("http://localhost:8080")
+.uri("http://localhost:8082")
+.uri("http://localhost:8081")
+
+Gateway knows ports.
+
+After Eureka
+.uri("lb://USER-SERVICE")
+.uri("lb://PRODUCT-SERVICE")
+.uri("lb://ORDER-SERVICE")
+
+Notice:
+
+lb://
+
+means:
+
+Load Balanced
+
+Gateway asks Eureka:
+
+Where is USER-SERVICE?
+
+Eureka responds:
+
+localhost:8080
+
+Gateway forwards request.
+
+Request Flow After Step 12
+
+User calls:
+
+http://localhost:8085/users
+
+Flow:
+
+Client
+  |
+  v
+API Gateway
+  |
+  v
+Eureka
+  |
+  v
+USER-SERVICE -> localhost:8080
+  |
+  v
+Response
+Why This Is Better
+Without Eureka
+.uri("http://localhost:8080")
+
+If User Service changes:
+
+8080 -> 8090
+
+Gateway breaks.
+
+With Eureka
+.uri("lb://USER-SERVICE")
+
+Port changes:
+
+8080 -> 8090
+
+Eureka updates automatically.
+
+Gateway still works.
+
+Example Final GatewayConfig
+
+After Eureka:
+
+@Configuration
+public class GatewayConfig {
+
+    @Bean
+    public RouteLocator customRoutes(RouteLocatorBuilder builder) {
+
+        return builder.routes()
+
+                .route("user-service",
+                        r -> r.path("/users/**")
+                                .uri("lb://USER-SERVICE"))
+
+                .route("product-service",
+                        r -> r.path("/products/**")
+                                .uri("lb://PRODUCT-SERVICE"))
+
+                .route("order-service",
+                        r -> r.path("/orders/**")
+                                .uri("lb://ORDER-SERVICE"))
+
+                .build();
+    }
+}
+For You Right Now
+
+Don't implement Step 11 and Step 12 yet.
+
+First fix Eureka.
+
+Since you're using Spring Boot 4.1.0 and Eureka is failing with:
+
+TransportClientFactories
+
+I'd recommend creating the Eureka Server using Spring Boot 3.5.x first.
+
+Once you can open:
+
+http://localhost:8761
+
+and see the dashboard, then we'll do:
+
+Step 11 → Register Gateway
+Step 12 → Convert routes to lb://
+
+in about 10 minutes.
+
+  .uri("lb://PRODUCT-SERVICE")) what happens here ?? why replace with hard code ??
+
+This is the main purpose of Eureka, so it's important to understand.
+
+Today (Hardcoded URL)
+
+You currently have:
+
+.uri("http://localhost:8082")
+
+This means:
+
+Gateway knows exact location
+of Product Service
+
+Flow:
+
+Gateway
+   |
+   +----> localhost:8082
+Problem
+
+Suppose tomorrow Product Service changes:
+
+8082 -> 9090
+
+Now Gateway still has:
+
+.uri("http://localhost:8082")
+
+Result:
+
+Connection Refused
+
+Gateway breaks.
+
+You must manually update:
+
+8082 -> 9090
+
+and restart Gateway.
+
+With Eureka
+
+Product Service starts and tells Eureka:
+
+Hi Eureka,
+
+I am PRODUCT-SERVICE
+
+Running on:
+localhost:8082
+
+Eureka stores:
+
+PRODUCT-SERVICE
+    |
+    +---- localhost:8082
+
+Gateway uses:
+
+.uri("lb://PRODUCT-SERVICE")
+
+Notice:
+
+lb = Load Balanced
+What Happens Internally?
+
+User calls:
+
+GET /products
+
+Gateway receives request:
+
+Need PRODUCT-SERVICE
+
+Gateway asks Eureka:
+
+Where is PRODUCT-SERVICE?
+
+Eureka replies:
+
+localhost:8082
+
+Gateway forwards request.
+
+Tomorrow Port Changes
+
+Product Service starts:
+
+PRODUCT-SERVICE
+localhost:9090
+
+Eureka updates:
+
+PRODUCT-SERVICE
+localhost:9090
+
+Gateway code remains:
+
+.uri("lb://PRODUCT-SERVICE")
+
+No change required.
+
+Everything still works.
+
+Bigger Benefit: Multiple Instances
+
+Suppose:
+
+PRODUCT-SERVICE #1
+localhost:8082
+
+PRODUCT-SERVICE #2
+localhost:8086
+
+PRODUCT-SERVICE #3
+localhost:8087
+
+All register as:
+
+PRODUCT-SERVICE
+
+Eureka stores:
+
+PRODUCT-SERVICE
+
+8082
+8086
+8087
+
+Gateway:
+
+.uri("lb://PRODUCT-SERVICE")
+
+asks Eureka:
+
+Give PRODUCT-SERVICE instances
+
+Eureka returns:
+
+8082
+8086
+8087
+
+Gateway automatically distributes traffic:
+
+Request 1 -> 8082
+
+Request 2 -> 8086
+
+Request 3 -> 8087
+
+Request 4 -> 8082
+
+This is load balancing.
+
+Why Companies Use It
+
+Without Eureka:
+
+.uri("http://localhost:8082")
+
+Problems:
+
+Hardcoded ports
+Manual maintenance
+No scaling
+No load balancing
+
+With Eureka:
+
+.uri("lb://PRODUCT-SERVICE")
+
+Benefits:
+
+Dynamic discovery
+Automatic instance lookup
+Load balancing
+High availability
+Easier deployment
+Interview Answer
+
+If an interviewer asks:
+
+Why use lb://PRODUCT-SERVICE instead of http://localhost:8082?
+
+Answer:
+
+lb://PRODUCT-SERVICE uses service discovery through Eureka. The API Gateway does not need to know the actual host or port of the service. Eureka provides available instances dynamically, and Spring Cloud LoadBalancer distributes requests among them. This removes hardcoded URLs and supports scaling and fault tolerance.
+
+That's exactly why Step 12 exists in your project.
+
+Improve accuracy for technical work
+Upgrade to Plus and use the latest Thinking model to debug code, reason through systems, and solve math or
