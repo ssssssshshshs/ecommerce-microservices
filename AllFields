@@ -1,0 +1,83 @@
+Product-service fields 
+[
+  {
+    "category": "Electronics",
+    "createdAt": "2026-05-27T11:10:21.009391",
+    "description": "High Performance",
+    "id": 1,
+    "name": "Gaming Laptop",
+    "price": 85000,
+    "stockQuantity": 10
+  },
+  {
+    "category": "Electronics",
+    "createdAt": "2026-05-27T11:13:50.386161",
+    "description": "High Performance",
+    "id": 2,
+    "name": "Desktop",
+    "price": 120000,
+    "stockQuantity": 15
+  },
+  {
+    "category": "Electronics",
+    "createdAt": "2026-05-30T22:07:17.61851",
+    "description": "High Performance",
+    "id": 3,
+    "name": "Khushi",
+    "price": 185000,
+    "stockQuantity": 10
+  }
+  
+  ............................................
+  
+  User-service fields
+  
+  [
+  {
+    "id": 11,
+    "name": "khushi",
+    "email": "Khushi@gmail.com"
+  },
+  {
+    "id": 13,
+    "name": "Rohit",
+    "email": "rohit@gmail.com"
+  },
+  {
+    "id": 14,
+    "name": "Rohit",
+    "email": "Arushi@gmail.com"
+  },
+  {
+    "id": 15,
+    "name": "Kartik",
+    "email": "Kartik@gmail.com"
+  }
+  
+  .................................................
+  Order-service fields
+  [
+  {
+    "id": 2,
+    "productId": 201,
+    "quantity": 2,
+    "price": 900,
+    "totalPrice": 1800,
+    "userId": 2
+  },
+  {
+    "id": 3,
+    "productId": 101,
+    "quantity": 20,
+    "price": 5000,
+    "totalPrice": 100000,
+    "userId": 3
+  },
+  {
+    "id": 4,
+    "productId": 401,
+    "quantity": 20,
+    "price": 5000,
+    "totalPrice": 100000,
+    "userId": 4
+  },
