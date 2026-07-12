@@ -1,4 +1,19 @@
 package com.example.user_service.dto;
+
+import com.example.user_service.enums.Role;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
+
 public class UserResponse {
 
     private Integer id;
@@ -7,6 +22,8 @@ public class UserResponse {
 
     private String email;
 
+    private Role role;
+/*
     public UserResponse() {
     }
 
@@ -40,4 +57,10 @@ public class UserResponse {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
+
+
+ */
+
 }

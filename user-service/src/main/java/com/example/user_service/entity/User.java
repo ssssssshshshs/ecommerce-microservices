@@ -1,5 +1,14 @@
 package com.example.user_service.entity;
+import com.example.user_service.enums.Role;
 import jakarta.persistence.*;
+import lombok.*;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 @Entity
 @Table(name = "users")
@@ -8,11 +17,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String role;
     private String name;
     @Column(unique = true)
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+/*
     public User() {
     }
 
@@ -55,11 +66,13 @@ public class User {
         this.password = password;
     }
 
-public String getRole(){
+    public Role getRole() {
         return role;
-}
-public void setRole(String role){
-        this.role=role;
-}
+    }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+ */
 }

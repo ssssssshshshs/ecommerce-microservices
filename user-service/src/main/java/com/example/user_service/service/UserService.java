@@ -29,23 +29,26 @@ public class UserService {
 
 package com.example.user_service.service;
 
-import com.example.user_service.dto.LoginRequest;
-import com.example.user_service.dto.LoginResponse;
-import com.example.user_service.dto.UserRequest;
-import com.example.user_service.dto.UserResponse;
+import com.example.user_service.dto.*;
 import com.example.user_service.entity.User;
+import com.example.user_service.enums.Role;
 import com.example.user_service.exception.EmailAlreadyExistsException;
 import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.repository.UserRepository;
 import com.example.user_service.security.JwtUtil;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
+
+import static com.example.user_service.enums.Role.ROLE_USER;
 
 
 @Service
@@ -53,6 +56,9 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository repository;
     private final JwtUtil jwtUtil;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public UserService(UserRepository repository,BCryptPasswordEncoder passwordEncoder,JwtUtil jwtUtil) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -71,14 +77,6 @@ public class UserService {
             );
         }
 
-
-
-
-
-
-
-
-
         User user = new User();
 
         user.setName(request.getName());
@@ -86,51 +84,45 @@ public class UserService {
 
         user.setPassword(
                 passwordEncoder.encode(request.getPassword()));
-        user.setRole("USER");
+
+        user.setRole(Role.ROLE_USER);
         User savedUser = repository.save(user);
 
         return new UserResponse(
                 savedUser.getId(),
                savedUser.getName(),
-                savedUser.getEmail()
+                savedUser.getEmail(),
+                savedUser.getRole()
+
         );
     }
 
-    public List<UserResponse> getAllUsers() {
+  public List<UserResponse> getAllUsers() {
 
-        List<User> users = repository.findAll();
+      try {
 
-        return users.stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail()
-                ))
-                .collect(Collectors.toList());
-    }
-/*
-    public String login(LoginRequest request) {
+          List<User> users = repository.findAll();
 
-        User user = repository.findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        new RuntimeException("User not found")
-                );
+          return users.stream()
+                  .map(user -> new UserResponse(
+                          user.getId(),
+                          user.getName(),
+                          user.getEmail(),
+                          user.getRole()
+                  ))
+                  .toList();
 
-        boolean passwordMatches =
-                passwordEncoder.matches(
-                        request.getPassword(),
-                        user.getPassword()
-                );
+      } catch (Exception e) {
 
-        if (!passwordMatches) {
-            throw new RuntimeException("Invalid password");
-        }
+          System.out.println("Exception occurred while fetching all users:");
+          e.printStackTrace();
 
-        return "Login Successful";
-    }
+          throw new RuntimeException(
+                  "Failed to fetch all users: " + e.getMessage(), e
+          );
+      }
+  }
 
- */
-//public String login(LoginRequest request) {
 
     public LoginResponse login(LoginRequest request){
     User user = repository.findByEmail(request.getEmail())
@@ -140,9 +132,7 @@ public class UserService {
                     new UserNotFoundException("User not found")
             );
 
-        //    .orElseThrow(() ->
-        //            new RuntimeException("User not found")
-        //    );
+
 
     boolean passwordMatches =
             passwordEncoder.matches(
@@ -163,7 +153,7 @@ public class UserService {
    // return jwtUtil.generateToken(user.getEmail());  ... raw form token generate..
 
         String token =
-                jwtUtil.generateToken(user.getEmail());
+                jwtUtil.generateToken(user.getEmail(),user.getRole());
 
         return new LoginResponse(
                 token,
@@ -188,12 +178,13 @@ public class UserService {
         return new UserResponse(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole()
         );
     }
 
 
-    public UserResponse getUserById(Integer id) {
+   public UserResponse getUserById(Integer id) {
 
 
 //    User user = repository.findById(id).orElse(null);
@@ -213,8 +204,32 @@ public class UserService {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
 
         return dto;
+    }
+
+    public UserResponse updateUserRole(
+            Integer id,
+            UpdateRoleRequest request) {
+
+        User user = repository.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found with id : " + id));
+
+        user.setRole(request.getRole());
+
+        User updatedUser = repository.save(user);
+
+        UserResponse response = new UserResponse();
+
+        response.setId(updatedUser.getId());
+        response.setName(updatedUser.getName());
+        response.setEmail(updatedUser.getEmail());
+        response.setRole(updatedUser.getRole());
+
+        return response;
     }
 
 }

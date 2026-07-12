@@ -66,26 +66,26 @@ public class OrderController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Integer id) {
         return ResponseEntity.ok(service.getOrderById(id));
     }
     
     @PatchMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> patchOrder(@PathVariable Long id, @RequestBody OrderPatchDTO request) 
+    public ResponseEntity<OrderResponseDTO> patchOrder(@PathVariable Integer id, @RequestBody OrderPatchDTO request)
     {
         return ResponseEntity.ok(service.updateOrderPartially(id, request));
     }
     
     @PutMapping("/{id}")
     public Order updateOrder(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @RequestBody Order order) {
 
         return service.updateOrder(id, order);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<String> deleteOrder(@PathVariable Integer id) {
 
          service.deleteOrder(id);
          return ResponseEntity.noContent().build();
@@ -113,7 +113,7 @@ public class OrderController {
 
     @GetMapping("/test-user/{id}")
     public UserResponse testUser(
-            @PathVariable Long id) {
+            @PathVariable Integer id) {
 
         return service.testUserService(id);
     }

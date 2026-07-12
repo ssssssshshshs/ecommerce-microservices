@@ -3,43 +3,50 @@ package com.example.orderservice.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import lombok.*;
+
+@Getter
+@Setter
+@Data
+@Builder
+
+@NoArgsConstructor
+@AllArgsConstructor
+
+
+
 public class OrderRequestDTO {
 
 	@NotNull(message = "Product ID is required")
-    private Long productId;
+    private Integer productId;
 	
 	 @NotNull(message = "Quantity is required")
 	 @Min(1)
     private Integer quantity;
-	/* 
-	 @NotNull(message = "Price is required")
-	 @Min(value = 1, message = "Price must be greater than 0")
-    private Double price;
-*/
 	 @NotNull(message = "User ID is required")
-	 private Long userId;
+	 private Integer userId;
 	 
-	 private Long id;
+	 private Integer id;
 	 private Double totalPrice;
 	 
-	 
+	 /*
 	 
     public OrderRequestDTO() {
     }
 
-    public Long getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
     
@@ -50,15 +57,7 @@ public class OrderRequestDTO {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-/*
-    public Double getPrice() {
-        return price;
-    }
 
-    public void setPrice(Double price) {
-        this.price = price;
-
-  }
 
  */
 

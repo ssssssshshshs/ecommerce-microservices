@@ -1,15 +1,25 @@
 package com.example.orderservice.dto;
 
+import lombok.*;
+
+@Getter
+@Setter
+@Data
+@Builder
+
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class OrderPatchDTO {
 
 
 	private Double price;
 	private Integer quantity;
-	private Long userId;
-	private Long productId;
+	private Integer userId;
+	private Integer productId;
 	private Double totalPrice;
 
-	
+	/*
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
@@ -42,5 +52,6 @@ public class OrderPatchDTO {
 		this.productId = productId;
 	}
 	
+	*/
 	
 }

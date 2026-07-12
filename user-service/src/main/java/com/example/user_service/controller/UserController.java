@@ -39,10 +39,7 @@ public class UserController {
 
 package com.example.user_service.controller;
 
-import com.example.user_service.dto.LoginRequest;
-import com.example.user_service.dto.LoginResponse;
-import com.example.user_service.dto.UserRequest;
-import com.example.user_service.dto.UserResponse;
+import com.example.user_service.dto.*;
 import com.example.user_service.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -79,10 +76,6 @@ public class UserController {
     }
 
 
-
-
-
-
     @PostMapping("/login")
     public LoginResponse login(
             @RequestBody LoginRequest request) {
@@ -103,6 +96,14 @@ public class UserController {
         return service.getCurrentUser(authentication);
     }
 
+    @PutMapping("/{id}/role")
+    public ResponseEntity<UserResponse> updateUserRole(
+            @PathVariable Integer id,
+            @RequestBody UpdateRoleRequest request) {
+
+        return ResponseEntity.ok(
+                service.updateUserRole(id, request));
+    }
 
 
 }

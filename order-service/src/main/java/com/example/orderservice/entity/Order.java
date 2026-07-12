@@ -10,6 +10,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+
+import lombok.*;
+
+@Getter
+@Setter
+@Data
+@Builder
+
+@NoArgsConstructor
+@AllArgsConstructor
+
 @Entity
 @Table(name = "orders")
 
@@ -18,9 +30,9 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    private Long userId;
+    private Integer userId;
     private Integer productId;
 
     private Integer quantity;
@@ -39,13 +51,15 @@ public class Order {
     	CANCELLED,
     	DELIVERED
     }
-    
+  
+  /*
+  
  // Getter and Setter for id
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -89,8 +103,8 @@ public class Order {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
-    
+  */  
 }

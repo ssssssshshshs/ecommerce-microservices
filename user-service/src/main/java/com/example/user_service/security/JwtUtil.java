@@ -1,6 +1,7 @@
 
 package com.example.user_service.security;
 
+import com.example.user_service.enums.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,14 +16,15 @@ public class JwtUtil {
 
     private static final String SECRET =
             "mysecretkeymysecretkeymysecretkey12";
-
+    private Role role;
     private final Key key =
             Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String email) {
+    public String generateToken(String email ,Role role) {
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role.name())
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(
@@ -43,6 +45,18 @@ public class JwtUtil {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+
+    public String extractRole(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("role", String.class);
     }
 
     public boolean validateToken(String token) {

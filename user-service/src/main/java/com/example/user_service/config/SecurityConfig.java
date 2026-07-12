@@ -35,9 +35,11 @@ package com.example.user_service.config;
 
 import com.example.user_service.security.JwtFilter;
 
+// import jakarta.ws.rs.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.
         HttpSecurity;
 
@@ -69,7 +71,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-
             HttpSecurity http) throws Exception {
 
         http
@@ -80,24 +81,68 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS
                         )
                 )
-
+/*
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers(
                                         "/users",
                                         "/users/login",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**" ,
-                                        "/users/**"
-
-
-
+                                        "/users/**",
+                                        "/error",
+                                        "/users/id/*"
                                 )
                                 .permitAll()
 
                                 .anyRequest()
                                 .authenticated()
                 )
+
+
+ */
+
+                .authorizeHttpRequests(auth -> auth
+
+                        // Public APIs
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/users",
+                                "/users/login"
+                        ).permitAll()
+
+                        // Swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        // Logged-in users
+                        .requestMatchers(
+                                "/users/me"
+                        ).authenticated()
+
+                        // Only Admin - Get All Users
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/users"
+                        ).hasRole("ADMIN")
+
+                        // Only Admin - Get Users By id
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/users/{id}"
+                        ).hasRole("ADMIN")
+
+
+
+                        // Only Admin - Update Role
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/users/*/role"
+                        ).hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
+                )
+
 
                 .addFilterBefore(
                         jwtFilter,

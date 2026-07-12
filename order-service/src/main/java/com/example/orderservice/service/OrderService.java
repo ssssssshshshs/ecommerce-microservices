@@ -91,9 +91,12 @@ public class OrderService {
 
     public OrderResponseDTO createOrder(OrderRequestDTO request) {
 
+        // ==========================
         // Quantity Validation
+        // ==========================
 
-        if (request.getQuantity() <= 0) {
+        if (request.getQuantity() == null ||
+                request.getQuantity() <= 0) {
 
             logger.warn("Invalid quantity entered: {}",
                     request.getQuantity());
@@ -102,9 +105,12 @@ public class OrderService {
                     "Quantity must be greater than zero");
         }
 
+        // ==========================
         // Product Id Validation
+        // ==========================
 
-        if (request.getProductId() <= 0) {
+        if (request.getProductId() == null ||
+                request.getProductId() <= 0) {
 
             logger.warn("Invalid ProductId entered: {}",
                     request.getProductId());
@@ -113,9 +119,12 @@ public class OrderService {
                     "Invalid product id");
         }
 
+        // ==========================
         // User Id Validation
+        // ==========================
 
-        if (request.getUserId() <= 0) {
+        if (request.getUserId() == null ||
+                request.getUserId() <= 0) {
 
             logger.warn("Invalid UserId entered: {}",
                     request.getUserId());
@@ -133,7 +142,7 @@ public class OrderService {
         try {
 
             user = userClient.getUserById(
-                    Long.valueOf(request.getUserId()));
+                    request.getUserId());
 
         } catch (Exception e) {
 
@@ -184,29 +193,23 @@ public class OrderService {
         // Create Order
         // ==========================
 
-        logger.info("Creating new order");
-
         Order order = new Order();
-
-        order.setProductId(
-                request.getProductId());
 
         order.setUserId(
                 request.getUserId());
 
+        order.setProductId(
+                request.getProductId());
+
         order.setQuantity(
                 request.getQuantity());
-
-        // Price comes from Product Service
 
         order.setPrice(
                 product.getPrice());
 
-        // Calculate Total Price
-
         double totalPrice =
-                product.getPrice()
-                        * request.getQuantity();
+                product.getPrice() *
+                        request.getQuantity();
 
         order.setTotalPrice(
                 totalPrice);
@@ -220,10 +223,12 @@ public class OrderService {
         Order savedOrder =
                 repository.save(order);
 
-        logger.info("Order placed successfully");
+        logger.info(
+                "Order placed successfully. Order Id: {}",
+                savedOrder.getId());
 
         // ==========================
-        // Response DTO
+        // Prepare Response
         // ==========================
 
         OrderResponseDTO response =
@@ -232,11 +237,11 @@ public class OrderService {
         response.setId(
                 savedOrder.getId());
 
-        response.setProductId(
-                savedOrder.getProductId());
-
         response.setUserId(
                 savedOrder.getUserId());
+
+        response.setProductId(
+                savedOrder.getProductId());
 
         response.setQuantity(
                 savedOrder.getQuantity());
@@ -249,6 +254,11 @@ public class OrderService {
 
         return response;
     }
+
+
+
+
+
 
         public List<OrderResponseDTO> getAllOrders() {
    	 
@@ -421,7 +431,7 @@ public class OrderService {
         return response;
     }
     */
-    public Order updateOrder(Long id, Order updatedOrder) {
+    public Order updateOrder(Integer id, Order updatedOrder) {
 
     //    Order existing = repository.findById(id)
       //          .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -451,7 +461,7 @@ public class OrderService {
         return "Order deleted successfully";    
     }*/
     
-    public String deleteOrder(Long id) {
+    public String deleteOrder(Integer id) {
 
         if (!repository.existsById(id)) {
             throw new OrderNotFoundException(
