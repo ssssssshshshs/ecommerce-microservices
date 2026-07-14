@@ -1,5 +1,4 @@
 package com.example.user_service.security;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,11 +62,20 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = jwtUtil.extractEmail(token);
         String role =
                 jwtUtil.extractRole(token);
+        Integer id=jwtUtil.extractUserId(token);
+
+        JwtUser jwtUser = new JwtUser(
+                id,
+                email,
+                role
+        );
+
+
 
 
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(
-                        email,
+                        jwtUser,
                         null,
                       //  Collections.emptyList()
                         List.of(

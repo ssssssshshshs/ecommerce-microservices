@@ -36,6 +36,7 @@ import com.example.user_service.exception.EmailAlreadyExistsException;
 import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.repository.UserRepository;
+import com.example.user_service.security.JwtUser;
 import com.example.user_service.security.JwtUtil;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -153,7 +154,7 @@ public class UserService {
    // return jwtUtil.generateToken(user.getEmail());  ... raw form token generate..
 
         String token =
-                jwtUtil.generateToken(user.getEmail(),user.getRole());
+                jwtUtil.generateToken(user.getId(),user.getEmail(),user.getRole());
 
         return new LoginResponse(
                 token,
@@ -162,7 +163,7 @@ public class UserService {
         );
 
     }
-
+/*
     public UserResponse getCurrentUser(
             Authentication authentication) {
 
@@ -182,6 +183,31 @@ public class UserService {
                 user.getRole()
         );
     }
+
+
+ */
+
+    public UserResponse getCurrentUser(
+            Authentication authentication) {
+
+        JwtUser jwtUser =
+                (JwtUser) authentication.getPrincipal();
+
+        User user = repository.findById(jwtUser.getId())
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
+    }
+
 
 
    public UserResponse getUserById(Integer id) {
